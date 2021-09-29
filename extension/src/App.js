@@ -19,7 +19,33 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Autocomplete from "@mui/material/Autocomplete";
+
 // import Image from "material-ui-image";
+
+const TypeAheadSelect = ({ options, label }) => {
+  return (
+    <Autocomplete disablePortal id="combo-box-demo" options={options} renderInput={params => <TextField {...params} label={label} />} />
+  );
+};
+
+const AirLineSelect = () => {
+  const options = [{ label: "UA", value: "UA" }];
+  const label = "Airline";
+  return <TypeAheadSelect options={options} label={label} />;
+};
+
+const OriginSelect = () => {
+  const options = [{ label: "IAD", value: "IAD" }];
+  const label = "Origin";
+  return <TypeAheadSelect options={options} label={label} />;
+};
+
+const DestinationSelect = () => {
+  const options = [{ label: "DFW", value: "DFW" }];
+  const label = "Destination";
+  return <TypeAheadSelect options={options} label={label} />;
+};
 
 const TypeHeadSelect = () => {
   var options = [{ id: 1, name: "John" }, { id: 2, name: "Miles" }, { id: 3, name: "Charles" }, { id: 4, name: "Herbie" }];
@@ -70,13 +96,13 @@ function SignUp() {
                 <TypeHeadSelect />
               </Grid> */}
               <Grid item xs={12}>
-                <TextField required fullWidth id="airline" label="Airline" name="airline" autoComplete="airline" />
+                <AirLineSelect />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField autoComplete="fname" name="origin" required fullWidth id="oring" label="Origin" autoFocus />
+                <OriginSelect />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField required fullWidth id="destination" label="Destination" name="destination" autoComplete="lname" />
+                <DestinationSelect />
               </Grid>
             </Grid>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
