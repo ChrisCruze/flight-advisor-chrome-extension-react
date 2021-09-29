@@ -23,53 +23,62 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 // import Image from "material-ui-image";
 
-const TypeAheadSelect = ({ options, label }) => {
-  return (
-    <Autocomplete disablePortal id="combo-box-demo" options={options} renderInput={params => <TextField {...params} label={label} />} />
-  );
-};
-
-const AirLineSelect = () => {
-  const options = [{ label: "UA", value: "UA" }];
-  const label = "Airline";
-  return <TypeAheadSelect options={options} label={label} />;
-};
-
-const OriginSelect = () => {
-  const options = [{ label: "IAD", value: "IAD" }];
-  const label = "Origin";
-  return <TypeAheadSelect options={options} label={label} />;
-};
-
-const DestinationSelect = () => {
-  const options = [{ label: "DFW", value: "DFW" }];
-  const label = "Destination";
-  return <TypeAheadSelect options={options} label={label} />;
-};
-
-const TypeHeadSelect = () => {
-  var options = [{ id: 1, name: "John" }, { id: 2, name: "Miles" }, { id: 3, name: "Charles" }, { id: 4, name: "Herbie" }];
-  return (
-    <Typeahead
-      id={"ad"}
-      onChange={selected => {
-        console.log({ selected });
-        // Handle selections...
-      }}
-      options={options}
-    />
-  );
-};
 const theme = createTheme();
-function SignUp() {
+
+const selectFieldDict = {
+  origin: { options: [{ label: "IAD", value: "IAD" }], label: "Origin", id: "origin" },
+  destination: { options: [{ label: "IAD", value: "IAD" }], label: "Destination", id: "destination" },
+  airline: { options: [{ label: "IAD", value: "IAD" }], label: "Airline", id: "airline" }
+};
+
+const App = () => {
+  const [url, setUrl] = useState("");
+  const [formData, setFormdata] = useState({
+    origin: { value: "", label: "" },
+    destination: { value: "", label: "" },
+    airline: { value: "", label: "" }
+  });
   const handleSubmit = event => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
-      password: data.get("password")
-    });
+    console.log({ formData });
+  };
+
+  useEffect(() => {
+    const queryInfo = { active: true, lastFocusedWindow: true };
+    chrome.tabs &&
+      chrome.tabs.query(queryInfo, tabs => {
+        const url = tabs[0].url;
+        setUrl(url);
+      });
+  }, []);
+
+  const TypeAheadSelect = ({ options, label, id }) => {
+    return (
+      <Autocomplete
+        disablePortal
+        value={formData[id].label}
+        onChange={(event, newValue) => {
+          const clonedData = { ...formData };
+          clonedData[id] = newValue || { value: "", label: "" };
+          setFormdata(clonedData);
+        }}
+        id={id}
+        options={options}
+        renderInput={params => <TextField {...params} label={label} />}
+      />
+    );
+  };
+
+  const AirLineSelect = () => {
+    return <TypeAheadSelect {...selectFieldDict["airline"]} />;
+  };
+
+  const OriginSelect = () => {
+    return <TypeAheadSelect {...selectFieldDict["origin"]} />;
+  };
+
+  const DestinationSelect = () => {
+    return <TypeAheadSelect {...selectFieldDict["destination"]} />;
   };
 
   return (
@@ -113,35 +122,6 @@ function SignUp() {
       </Container>
     </ThemeProvider>
   );
-}
-
-const App = () => {
-  const [url, setUrl] = useState("");
-
-  useEffect(() => {
-    const queryInfo = { active: true, lastFocusedWindow: true };
-
-    chrome.tabs &&
-      chrome.tabs.query(queryInfo, tabs => {
-        const url = tabs[0].url;
-        setUrl(url);
-      });
-  }, []);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          URL
-          {url}
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
 };
 
-export default SignUp;
+export default App;
