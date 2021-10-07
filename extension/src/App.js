@@ -26,6 +26,11 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import Loader from "react-loader-spinner";
 import { AirportOptions, AirlineOptions } from "./Data.js";
 import Switch from "@mui/material/Switch";
+import InfoIcon from "@mui/icons-material/Info";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 import { dark } from "@mui/material/styles/createPalette";
 
@@ -38,7 +43,7 @@ const darkTheme = createTheme({
 const theme = createTheme();
 const airline_options = AirlineOptions;
 const airport_options = AirportOptions;
-const ngrok_url = "https://5d3b-35-239-124-170.ngrok.io"; //"https://cc6f-34-83-40-166.ngrok.io";
+const ngrok_url = "https://e374-34-66-238-70.ngrok.io"; //"https://5d3b-35-239-124-170.ngrok.io"; //"https://cc6f-34-83-40-166.ngrok.io";
 
 const selectFieldDict = {
   origin: { options: airport_options, label: "Origin", id: "origin" },
@@ -103,11 +108,28 @@ const LoadingScreen = () => {
   );
 };
 
+const percentFormat = num => {
+  try {
+    return parseInt(num);
+  } catch (err) {
+    console.log({ err });
+    return 0;
+  }
+};
+
 const ChartScreen = ({ response, themeToggle }) => {
+  const num = response.data;
+  const numFormatted = percentFormat(num);
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} direction="column" alignItems="center" justify="center">
       <Grid item xs={12}>
-        <SpeedometerChart percent={response.data} textColor={themeToggle ? "white" : "black"} />
+        <Tooltip title="Percent of airline's flights delayed 20 or more minutes on this route.">
+          <IconButton>
+            Route Delay Indicator
+            <InfoIcon />
+          </IconButton>
+        </Tooltip>
+        <SpeedometerChart percent={numFormatted} textColor={themeToggle ? "white" : "black"} />
       </Grid>
     </Grid>
   );
@@ -166,7 +188,7 @@ const App = () => {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center"
@@ -197,6 +219,7 @@ const App = () => {
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Submit
             </Button>
+
             <LoadingGraph response={response} loading={loading} themeToggle={themeToggle} />
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
