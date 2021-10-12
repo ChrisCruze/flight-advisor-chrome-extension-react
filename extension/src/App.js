@@ -27,11 +27,9 @@ import Loader from "react-loader-spinner";
 import { AirportOptions, AirlineOptions } from "./Data.js";
 import Switch from "@mui/material/Switch";
 import InfoIcon from "@mui/icons-material/Info";
-
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-
 import { dark } from "@mui/material/styles/createPalette";
 
 // import Image from "material-ui-image";
@@ -73,6 +71,9 @@ const getFlightDelay = ({ setResponse, url, setLoading }) => {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json;charset=UTF-8",
+      // "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+      "Access-Control-Allow-Methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT ",
       "Access-Control-Allow-Origin": "*"
     }
   };
@@ -88,7 +89,12 @@ const createURLFromForm = ({ formData }) => {
   const origin = formData.origin.value;
   const destination = formData.destination.value;
   const airline = formData.airline.value;
-  const url = `${ngrok_url}/delay_frequency/origin=${origin}&destination=${destination}&airline=${airline}`;
+  //https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=ORD&destination=SAN&airline=NK
+  // const url = `https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=${origin}&destination=${destination}&airline=${airline}`;
+  const url = `https://cors-anywhere.herokuapp.com/https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=${origin}&destination=${destination}&airline=${airline}`;
+
+  //https://cors-anywhere.herokuapp.com/https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=ORD&destination=SAN&airline=NK
+  //const url = `${ngrok_url}/delay_frequency/origin=${origin}&destination=${destination}&airline=${airline}`;
   console.log({ url });
   return url;
 };
@@ -116,10 +122,16 @@ const percentFormat = num => {
     return 0;
   }
 };
+const percentageGet = response => {
+  try {
+    return response.data.flight_delay_percentage;
+  } catch (err) {
+    return 0;
+  }
+};
 
 const ChartScreen = ({ response, themeToggle }) => {
-  const num = response.data;
-  const numFormatted = percentFormat(num);
+  const num = percentageGet(response); //response.data.flight_delay_percentage; //* 100;
   return (
     <Grid container spacing={2} direction="column" alignItems="center" justify="center">
       <Grid item xs={12}>
@@ -129,7 +141,7 @@ const ChartScreen = ({ response, themeToggle }) => {
             <InfoIcon />
           </IconButton>
         </Tooltip>
-        <SpeedometerChart percent={numFormatted} textColor={themeToggle ? "white" : "black"} />
+        <SpeedometerChart percent={num} textColor={themeToggle ? "white" : "black"} />
       </Grid>
     </Grid>
   );
@@ -143,7 +155,7 @@ const App = () => {
     destination: { value: "", label: "" },
     airline: { value: "", label: "" }
   });
-  const [response, setResponse] = useState({ data: undefined, response: "" });
+  const [response, setResponse] = useState({ data: { flight_delay_percentage: 0 }, response: "" });
   const [loading, setLoading] = useState(false);
   const [themeToggle, setThemeToggle] = useState(false);
   const handleSubmit = event => {
