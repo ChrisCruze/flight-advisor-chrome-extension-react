@@ -67,15 +67,15 @@ const SpeedometerChart = ({ percent, textColor }) => {
 const getFlightDelay = ({ setResponse, url, setLoading }) => {
   const options = {
     url: url,
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json;charset=UTF-8",
-      // "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-      "Access-Control-Allow-Methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT ",
-      "Access-Control-Allow-Origin": "*"
-    }
+    method: "GET"
+    // headers: {
+    //   Accept: "application/json",
+    //   "Content-Type": "application/json;charset=UTF-8",
+    //   // "Access-Control-Allow-Headers": "Content-Type",
+    //   "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+    //   "Access-Control-Allow-Methods": "DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT ",
+    //   "Access-Control-Allow-Origin": "*"
+    // }
   };
   axios(options).then(response => {
     const responseResult = { data: response.data, status: response.status };
@@ -91,8 +91,9 @@ const createURLFromForm = ({ formData }) => {
   const airline = formData.airline.value;
   //https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=ORD&destination=SAN&airline=NK
   // const url = `https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=${origin}&destination=${destination}&airline=${airline}`;
-  const url = `https://cors-anywhere.herokuapp.com/https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=${origin}&destination=${destination}&airline=${airline}`;
-
+  // const url = `https://cors-anywhere.herokuapp.com/https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=${origin}&destination=${destination}&airline=${airline}`;
+  const base_url = "https://30z23scool.execute-api.us-east-2.amazonaws.com/prod";
+  const url = `${base_url}?origin=${origin}&destination=${destination}&airline=${airline}`;
   //https://cors-anywhere.herokuapp.com/https://1lztwfbikg.execute-api.us-east-2.amazonaws.com/prod/flightdelay?origin=ORD&destination=SAN&airline=NK
   //const url = `${ngrok_url}/delay_frequency/origin=${origin}&destination=${destination}&airline=${airline}`;
   console.log({ url });
